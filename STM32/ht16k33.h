@@ -78,6 +78,7 @@ void _writePos(uint8_t pos, uint8_t mask);
 void ecrire_digit_pos(uint8_t pos, uint8_t digit);
 void extraire_heure_gga(const char* trame, uint8_t heure_tab[6]);
 void afficher_heure(uint8_t heure_tab[6]);
+void afficher_minutes(uint8_t minutes);
 void afficher_secondes(uint8_t secondes);
 void afficher_millisec(uint16_t millis);
 void afficher_point(uint8_t pos);
