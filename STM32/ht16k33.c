@@ -306,7 +306,7 @@ void ecrire_point_pos(uint8_t pos, int afficher_point) {
     }
 
     uint8_t mask = 0x00; // Valeur de départ, pas de segments allumés
-
+ 
     if (afficher_point) {
         mask = 0x80;  // Activer le point décimal (bit 7)
     }
