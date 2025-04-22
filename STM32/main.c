@@ -56,6 +56,7 @@ volatile uint8_t g_secondes = 0;
 volatile uint16_t g_ms = 0;
 
 volatile uint8_t flag_refresh = 0;
+volatile uint8_t flag_sec = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -76,8 +77,9 @@ int affichageDelay(void);
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
     // Vérifie que l'interruption provient du PPS (remplace PPS_PIN par le define correspondant)
-	if(GPIO_Pin == GPIO_PIN_11 || GPIO_Pin == GPIO_PIN_13)
+	if(GPIO_Pin == GPIO_PIN_11 )
 	{
+		flag_sec = 1;
 		// 1) Remettre le compteur du timer à zéro en logiciel
 		__HAL_TIM_SET_COUNTER(&htim2, 0);
 
@@ -100,6 +102,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   {
 
     g_ms ++;
+    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET);
       // on n'incrémente pas g_secondes si on veut que PPS le fasse
     // Tous les 1 ms, set un flag
     flag_refresh = 1;
@@ -215,20 +218,14 @@ int main(void)
 	  if (flag_refresh)
 	  {
 		  flag_refresh = 0;
-		  //afficher_minutes(g_minutes);
-		  //afficher_secondes(g_secondes);
-		  int t_before = g_ms;
-		  afficher_secondes(g_secondes);
-		  int t_after = g_ms;
-		  if(t_after < t_before){
-				diff =  t_after + 1000 - t_before;
+		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+		  afficher_millisec(g_ms);
+		  if(flag_sec){
+			  flag_sec = 1;
+			  afficher_secondes(g_secondes);
+			  afficher_minutes(g_minutes);
 		  }
-		  else{
-			  diff = t_after - t_before;
-		  }
-		  afficher_millisec(diff);
-		  HAL_Delay(200);
-	     // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_RESET);
+
 	  }
 
 
